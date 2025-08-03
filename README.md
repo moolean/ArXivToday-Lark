@@ -108,7 +108,7 @@ For example, to fetch arXiv papers and push them via the Lark bot at 12:24 PM ev
 2. Add the following line and save it:
 
    ```sh
-   24 14 * * 1-5 /absolute/path/to/your/python/interpreter /absolute/path/to/ArXivToday-Lark/main.py
+   24 12 * * 1-5 /absolute/path/to/your/python/interpreter /absolute/path/to/ArXivToday-Lark/main.py
    ```
 
 > [!NOTE]

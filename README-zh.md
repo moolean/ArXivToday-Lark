@@ -101,15 +101,15 @@ python main.py
 
 1. 使用如下命令打开 `crontab` 编辑器
 
-```sh
-crontab -e
-```
+    ```sh
+    crontab -e
+    ```
 
 2. 添加如下内容并保存
 
-```sh
-24 14 * * 1-5 /absolute/path/to/your/python/interpreter /absolute/path/to/ArXivToday-Lark/main.py
-```
+    ```sh
+    24 12 * * 1-5 /absolute/path/to/your/python/interpreter /absolute/path/to/ArXivToday-Lark/main.py
+    ```
 
 > [!NOTE]
 >
@@ -117,9 +117,9 @@ crontab -e
 
 3. 可以通过如下命令检查 `cron` 任务是否正确设置
 
-```sh
-crontab -l
-```
+    ```sh
+    crontab -l
+    ```
 
 ##### 使用 schedule 库周期性运行
 
