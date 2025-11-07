@@ -4,8 +4,8 @@ Utility Functions
 
 import os
 import yaml
-from openai import OpenAI
-
+import requests
+import json
 
 def load_config():
     yaml_file = os.path.join(os.path.dirname(__file__), 'config.yaml')
@@ -43,30 +43,33 @@ def get_llm_response(prompt: str, config: dict):
     base_url = llm_server_config['base_url']
     api_key = llm_server_config['api_key']
 
-    generation_config = {
-        # 'temperature': 0.0,
-        # 'top_p': 1.0,
-        'stream': False,
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {api_key}'
     }
 
-    client = OpenAI(
-        api_key=api_key,
-        base_url=base_url
-    )
+    data = {
+        'model': model,
+        'messages': [
+            {
+                'role': 'user',
+                'content': prompt
+            }
+        ],
+        'stream': False
+    }
 
-    messages = [
-        {
-            'role': 'user',
-            'content': prompt
-        },
-    ]
     try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            **generation_config
+        response = requests.post(
+            base_url,
+            headers=headers,
+            data=json.dumps(data),
+            timeout=30
         )
-        return response.choices[0].message.content.strip()
+        response.raise_for_status()
+        
+        result = response.json()
+        return result['choices'][0]['message']['content'].strip()
     except Exception as e:
         print('LLM Server Error: {}'.format(e))
         return None

@@ -16,7 +16,7 @@ def get_latest_papers(category, max_results=100):
     :param max_results: the maximum number of papers to get
     :return: a list of papers
     """
-    client = arxiv.Client()
+    client = arxiv.Client(page_size=200, delay_seconds=3)
     search_query = f'cat:{category}'
     search = arxiv.Search(
         query=search_query,
