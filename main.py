@@ -32,7 +32,7 @@ def task():
 
     papers = []
     for category in category_list:
-        papers.extend(get_latest_papers(category, max_results=100))
+        papers.extend(get_latest_papers(category, max_results=90))
     print('Total papers: {}'.format(len(papers)))
 
     # Deduplicate papers across categories
@@ -53,7 +53,7 @@ def task():
     if use_llm_for_translation:
         papers = translate_abstracts(papers, config)
         print('Translated Abstracts into Chinese')
-
+    # print(papers)
     prepend_to_json_file(paper_file, papers)
 
     # Post to Lark Webhook

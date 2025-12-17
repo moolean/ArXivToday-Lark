@@ -7,6 +7,7 @@ import json
 import arxiv
 from tqdm import tqdm
 from llm import is_paper_match, translate_abstract
+import re
 
 
 def get_latest_papers(category, max_results=100):
@@ -21,9 +22,10 @@ def get_latest_papers(category, max_results=100):
     search = arxiv.Search(
         query=search_query,
         max_results=max_results,
-        sort_by=arxiv.SortCriterion.SubmittedDate
+        sort_by=arxiv.SortCriterion.SubmittedDate,
+        sort_order=arxiv.SortOrder.Descending,
     )
-
+    
     papers = []
     for result in client.results(search):
         # Remove the version number from the id
@@ -37,7 +39,8 @@ def get_latest_papers(category, max_results=100):
             'id': paper_id,
             'abstract': result.summary.replace('\n', ' '),  # Remove line breaks
             'url': result.entry_id,
-            'published': result.published.date().isoformat()  # Get the date in ISO format
+            'published': result.published.date().isoformat(),  # Get the date in ISO format
+            'comment': result.comment
         }
         papers.append(paper)
 
@@ -75,12 +78,28 @@ def filter_papers_by_keyword(papers, keyword_list):
     # for paper in papers:
     #     if any(keyword in paper['abstract'].lower() for keyword in keyword_list):
     #         results.append(paper)
+    use_keyword_list = []
+    unused_keyword_list = []
+    for keyword in keyword_list:
+        keyword = keyword.lower()
+        if keyword.startswith('-'):
+            unused_keyword_list.append(keyword[1:])
+        else:
+            use_keyword_list.append(keyword)
 
-    keyword_set = set(keyword.lower() for keyword in keyword_list)
     for paper in papers:
-        if keyword_set & set(paper['abstract'].lower().split()):
-            results.append(paper)
+        title_lower = paper['title'].lower()
+        abstract_lower = paper['abstract'].lower()
 
+        paper_text = title_lower + ' ' + abstract_lower
+        # Check if any of the use_keywords (as continuous phrases) are in the abstract
+        # Check if any of the use_keywords (as whole words) are in the abstract
+        has_use_keyword = any(re.search(r'\b' + re.escape(keyword) + r'\b', paper_text, re.IGNORECASE) for keyword in use_keyword_list)
+        # Check if any of the unused_keywords (as whole words) are in the abstract
+        has_unused_keyword = any(re.search(r'\b' + re.escape(keyword) + r'\b', paper_text, re.IGNORECASE) for keyword in unused_keyword_list)
+        
+        if has_use_keyword and not has_unused_keyword:
+            results.append(paper)
     return results
 
 

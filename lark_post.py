@@ -32,7 +32,8 @@ def post_to_lark_webhook(tag: str, papers: list, config: dict):
             "abstract": paper['abstract'],
             "zh_abstract": paper.get('zh_abstract', None),
             "url": paper['url'],
-            "published": paper['published']
+            "published": paper['published'],
+            "comment": paper['comment'] if paper['comment'] else ""
         }
         for i, paper in enumerate(papers)
     ]
@@ -56,7 +57,7 @@ def post_to_lark_webhook(tag: str, papers: list, config: dict):
         "msg_type": "interactive",
         "card": card_data
     }
-
+   
     # Send HTTP POST request
     response = requests.post(config['webhook_url'], headers=headers, data=json.dumps(data))
 
