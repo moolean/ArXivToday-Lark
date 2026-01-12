@@ -29,14 +29,15 @@ def post_to_lark_webhook(tag: str, papers: list, config: dict):
             "counter": i + 1,
             "title": paper['title'],
             "id": paper['id'],
-            "abstract": paper['abstract'],
-            "zh_abstract": paper.get('zh_abstract', None),
+            "abstract": paper['zh_abstract'] if paper.get('zh_abstract', None) else paper.get('abstract', None),
+            # "zh_abstract": paper.get('zh_abstract', None),
             "url": paper['url'],
             "published": paper['published'],
             "comment": paper['comment'] if paper['comment'] else ""
         }
         for i, paper in enumerate(papers)
     ]
+    
 
     card_data = {
         "type": "template",
@@ -47,7 +48,7 @@ def post_to_lark_webhook(tag: str, papers: list, config: dict):
                 "today_date": today_date,
                 "tag": tag,
                 "total_paper": len(papers),
-                "table_rows": table_rows,
+                # "table_rows": table_rows,
                 "paper_list": paper_list
             }
         }
