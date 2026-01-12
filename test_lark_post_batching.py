@@ -3,7 +3,6 @@ Test script for verifying the batching logic in lark_post.py
 This script tests the batching without making actual API calls
 """
 
-import sys
 from unittest.mock import Mock, patch, call
 import json
 
